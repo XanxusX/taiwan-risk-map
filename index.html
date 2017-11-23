@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.css" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.css" />
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.js"></script>
-  <style>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.js"></script>
+	<style>
 		#map {
 			height: 800px;
 			width: 100%;
 			margin-top: 3em;
 		}
 	</style>
-  <title>Taiwan Risk Map</title>
+	<title>Taiwan Risk Map</title>
 </head>
+
 <body>
 	<div id="map"></div>
 	<script>
 		function initMap() {
 			$.getJSON('https://raw.githubusercontent.com/XanxusX/taiwan-risk-map/master/data.json', function (res) {
+				let geocoder = new google.maps.Geocoder();
 				let data = res.result.records;
 				console.log(data)
 				let taipei = {
@@ -31,17 +34,30 @@
 					zoom: 14,
 					center: taipei
 				});
-			/* 	for (let g of data) {
-					let marker = new google.maps.Marker({
+				for (let g of data) {
+					let address = g.Address;
+					geocoder.geocode({ 'address': address }, function (results, status) {
+						if (status == 'OK') {
+							map.setCenter(results[0].geometry.location);
+							let marker = new google.maps.Marker({
+								map: map,
+								position: results[0].geometry.location
+							});
+						} else {
+							console.log('Geocode was not successful for the following reason: ' + status);
+						}
+					});
+					/*let marker = new google.maps.Marker({
 						position: new google.maps.LatLng(g.wgs84aY, g.wgs84aX),
 						map: map,
 						title: g.company + g.station
-					});
-				} */
+					});*/
+				}
 			});
 		}
 	</script>
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYZqOlogA2mDVJlnVVn9SxKofFw7Yegag&callback=initMap">
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXf3L7L1uRPcOtZQpiRqjDNrB9_3oN51Q&callback=initMap">
 	</script>
 </body>
+
 </html>
